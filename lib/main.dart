@@ -99,11 +99,13 @@ class HomeState extends State<Home> {
 */
 
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:testjson/User.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,24 +120,42 @@ class CounterStroge{
 
     print(path.toString());
     print("myPath");
-    return File("$path/counter.text");
+    return File("$path/User.json");
+
   }
-  Future<int> readCounter() async{
+  Future<String> readCounter() async{
     try{
       final file = await _localFile;
+
       String contents = await file.readAsString();
-      return int.parse(contents);
+      return contents.toString();
     }
     catch(e)
     {
       print(e);
-      return 0;
+      return e.toString();
     }
   }
 
   Future<File> writeCounter(int counter) async{
+
     final file= await _localFile;
-    return file.writeAsString('$counter');
+
+     // var rawJSON = await json.decode(await DefaultAssetBundle.of(context)
+    //      .loadString('jsonfile/User.json'));
+    //  rawJSON['name'] = "NewCompany";
+    //
+
+    User us = new User("Mhd$counter", "annonymous");
+
+
+      var var1 = json.encode(us.toJson());
+    //
+    //  print(var1.toString());
+    //  await file.openWrite();
+    //  await file.writeAsString(var1);
+
+    return file.writeAsString('$var1');
   }
 }
 
@@ -168,13 +188,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String dis= "nothing";
 
   // _MyHomePageState(){
   @override
   void initState(){
   widget.stroge.readCounter().then((value) => {
     setState((){
-      _counter =value;
+      dis =value;
+     // _counter =value;
     })
   });
 }
@@ -183,9 +205,19 @@ Future<File> _incrementCounter(){
     _counter++;
   setState(() {
 
+    widget.stroge.readCounter().then((value) => {
+      setState((){
+        dis =value;
+        // _counter =value;
+      })
+    });
   });
 
   return widget.stroge.writeCounter(_counter);
+
+    // setState(() {
+    //
+    // });
 }
 
 
@@ -247,6 +279,7 @@ print("done");
          Column(
            children: [
              Text("$_counter"),
+             Text("$dis",style: TextStyle(fontSize: 20),),
              Image.network("https://raw.githubusercontent.com/anik2644/picture/development/lib/pics/Anik.jpg"),
            ],
          )
