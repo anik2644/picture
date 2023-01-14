@@ -120,7 +120,6 @@ class CounterStroge{
   }
   Future<File> get _localFile async{
     final path = await _localpath;
-
     print(path.toString());
     print("myPath");
     return File("$path/TOP.json");
@@ -130,17 +129,19 @@ class CounterStroge{
 
   Future<Object> readCounter() async{
     try{
+
       final file = await _localFile;
-
       String contents = await file.readAsString();
-
-     // final jsondata = await rootBundle.rootBundle.loadString('jsonfile/productlist.json');
+      // final jsondata = await rootBundle.rootBundle.loadString('jsonfile/productlist.json');
       final list = json.decode(contents) as List<dynamic> ;
 
+      List<User> allUser = list.map((e) => User.fromJson(e)).toList() as List<User>;
 
-      return list.map((e) => User.fromJson(e)).toList();
-
-     // return contents.toString();
+      for(int i=0; i<allUser.length;i++)
+        {
+          print(allUser[i].name);
+        }
+          return list.map((e) => User.fromJson(e)).toList();
     }
     catch(e)
     {
@@ -171,6 +172,10 @@ class CounterStroge{
 
     return file.writeAsString('$var1');
   }
+}
+
+class StaticVariables {
+  static String st= "User.json";
 }
 
 class MyApp extends StatelessWidget {
