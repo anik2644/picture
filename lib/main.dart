@@ -126,12 +126,21 @@ class CounterStroge{
     return File("$path/TOP.json");
 
   }
-  Future<String> readCounter() async{
+
+
+  Future<Object> readCounter() async{
     try{
       final file = await _localFile;
 
       String contents = await file.readAsString();
-      return contents.toString();
+
+     // final jsondata = await rootBundle.rootBundle.loadString('jsonfile/productlist.json');
+      final list = json.decode(contents) as List<dynamic> ;
+
+
+      return list.map((e) => User.fromJson(e)).toList();
+
+     // return contents.toString();
     }
     catch(e)
     {
@@ -143,12 +152,6 @@ class CounterStroge{
   Future<File> writeCounter(int counter) async{
 
     final file= await _localFile;
-
-     // var rawJSON = await json.decode(await DefaultAssetBundle.of(context)
-    //      .loadString('jsonfile/User.json'));
-    //  rawJSON['name'] = "NewCompany";
-    //
-
     User us = new User("Mhd$counter", "annonymous");
     users.add(us);
 
@@ -206,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState(){
   widget.stroge.readCounter().then((value) => {
     setState((){
-      dis =value;
+     // dis =value;
      // _counter =value;
     })
   });
@@ -218,7 +221,7 @@ Future<File> _incrementCounter(){
 
     widget.stroge.readCounter().then((value) => {
       setState((){
-        dis =value;
+       // dis =value;
         // _counter =value;
       })
     });
@@ -285,7 +288,57 @@ print("done");
       appBar: AppBar(
         title: Text(widget.title),
       ),
-       body: Center (
+       body: FutureBuilder(
+         future: widget.stroge.readCounter(),
+         builder: (context,data){
+           if(data.hasError){
+             return Center(child: Text("${data.error}"));
+           }else if(data.hasData){
+             var items =data.data as List<User>;
+             return ListView.builder(
+                 itemCount: items == null? 0: items.length,
+                 itemBuilder: (context,index){
+                   return Card(
+                     elevation: 5,
+                     margin: EdgeInsets.symmetric(horizontal: 10,vertical: 6),
+                     child: Container(
+                       padding: EdgeInsets.all(8),
+                       child: Row(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         crossAxisAlignment: CrossAxisAlignment.center,
+                         children: [
+                           Container(
+                             width: 50,
+                             height: 50,
+                            // child: Image(image: NetworkImage(items[index].imageURL.toString()),fit: BoxFit.fill,),
+                           ),
+                           Expanded(child: Container(
+                             padding: EdgeInsets.only(bottom: 8),
+                             child: Column(
+                               mainAxisAlignment: MainAxisAlignment.center,
+                               crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                 Padding(padding: EdgeInsets.only(left: 8,right: 8),child: Text(items[index].name.toString(),style: TextStyle(
+                                     fontSize: 16,
+                                     fontWeight: FontWeight.bold
+                                 ),),),
+                                 Padding(padding: EdgeInsets.only(left: 8,right: 8),child: Text(items[index].email.toString()),)
+                               ],
+                             ),
+                           ))
+                         ],
+                       ),
+                     ),
+                   );
+                 }
+             );
+           }else{
+             return Center(child: CircularProgressIndicator(),);
+           }
+         },
+       ),
+       /*
+       Center (
          child:
          Column(
            children: [
@@ -295,7 +348,7 @@ print("done");
            ],
          )
        ),
-
+*/
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
        /*
