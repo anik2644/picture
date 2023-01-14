@@ -157,7 +157,7 @@ class CounterStroge{
     users.add(us);
 
 
-
+    //users.clear();
     print(users.length);
 
     users.map((user) => user.toJson()).toList();
