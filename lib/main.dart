@@ -111,6 +111,9 @@ void main() {
   runApp(const MyApp());
 }
 class CounterStroge{
+
+  List<User> users = [];
+
   Future<String> get _localpath async{
     final directory = await getApplicationDocumentsDirectory();
     return directory.path ;
@@ -120,7 +123,7 @@ class CounterStroge{
 
     print(path.toString());
     print("myPath");
-    return File("$path/User.json");
+    return File("$path/TOP.json");
 
   }
   Future<String> readCounter() async{
@@ -147,11 +150,19 @@ class CounterStroge{
     //
 
     User us = new User("Mhd$counter", "annonymous");
+    users.add(us);
 
 
-      var var1 = json.encode(us.toJson());
+
+    print(users.length);
+
+    users.map((user) => user.toJson()).toList();
+
+   // json.encode(players)
+    var var1 = json.encode(users);
+   // var var1 = json.encode(us.toJson());
     //
-    //  print(var1.toString());
+      print(var1.toString());
     //  await file.openWrite();
     //  await file.writeAsString(var1);
 
@@ -279,7 +290,7 @@ print("done");
          Column(
            children: [
              Text("$_counter"),
-             Text("$dis",style: TextStyle(fontSize: 20),),
+            // Text("$dis",style: TextStyle(fontSize: 20),),
              Image.network("https://raw.githubusercontent.com/anik2644/picture/development/lib/pics/Anik.jpg"),
            ],
          )
